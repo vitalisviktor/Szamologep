@@ -78,9 +78,77 @@ namespace Szamologep
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            int pos = 0;
+            string elsoFel;
+            string masodikFel;
+            int elozoOpPos;
+            int koviOpPos;
+            bool koviOpPosKereses;
             Button btn = (Button)sender;
             string felirat = btn.Content.ToString();
-         
+            if (char.IsDigit(felirat[0]))
+            {
+                if(txbl_kijelzo.Text == "0")
+                {
+                    txbl_kijelzo.Text = "";
+                }
+                txbl_kijelzo.Text += felirat;
+            }
+            else if (felirat == "C")
+            {
+                txbl_kijelzo.Text = "0";
+            }
+            else if (felirat == "=")
+            {
+                pos = 0;
+                elozoOpPos = 0;
+                koviOpPos = 0;
+                foreach(char c in txbl_kijelzo.Text)
+                {
+                    if ("*/".Contains(c))
+                    {
+                        koviOpPosKereses = true;
+                        foreach (char d in felirat)
+                        {
+                            if(koviOpPos > pos && "+-*/".Contains(d))
+                            {
+                                koviOpPosKereses = false;
+                            }
+                            if (koviOpPosKereses)
+                            {
+                            koviOpPos++;
+                            }
+
+                        }
+
+
+                        elsoFel = txbl_kijelzo.Text.Substring(elozoOpPos, pos + 1);
+                        masodikFel = txbl_kijelzo.Text.Substring(pos + 1,txbl_kijelzo.Text.Length - pos - koviOpPos);
+
+                        Console.WriteLine(elsoFel);
+                        Console.WriteLine(masodikFel);
+
+
+
+                    }
+
+
+
+                    if ("+-*/".Contains(c))
+                    {
+                        elozoOpPos = pos;
+                    }
+
+                    pos++;
+                }
+            }
+            else
+            {
+                if (char.IsDigit(txbl_kijelzo.Text[txbl_kijelzo.Text.Length - 1]) && txbl_kijelzo.Text != "0")
+                {
+                    txbl_kijelzo.Text += felirat;
+                }
+            }
         }
     }
 }
