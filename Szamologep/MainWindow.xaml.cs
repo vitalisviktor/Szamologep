@@ -1,13 +1,6 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Szamologep
 {
@@ -21,9 +14,9 @@ namespace Szamologep
             InitializeComponent();
             GombokElhelyezese();
         }
-    
 
-    private void GombokElhelyezese()
+
+        private void GombokElhelyezese()
         {
             for (int i = 0; i < 4; i++)
             {
@@ -56,7 +49,7 @@ namespace Szamologep
                     {
                         btn.Background = Brushes.WhiteSmoke;
                     }
-                    else if(label == "C")
+                    else if (label == "C")
                     {
                         btn.Background = Brushes.IndianRed;
                         btn.Foreground = Brushes.White;
@@ -78,17 +71,11 @@ namespace Szamologep
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int pos = 0;
-            string elsoFel;
-            string masodikFel;
-            int elozoOpPos;
-            int koviOpPos;
-            bool koviOpPosKereses;
             Button btn = (Button)sender;
             string felirat = btn.Content.ToString();
             if (char.IsDigit(felirat[0]))
             {
-                if(txbl_kijelzo.Text == "0")
+                if (txbl_kijelzo.Text == "0")
                 {
                     txbl_kijelzo.Text = "";
                 }
@@ -100,47 +87,27 @@ namespace Szamologep
             }
             else if (felirat == "=")
             {
-                pos = 0;
-                elozoOpPos = 0;
-                koviOpPos = 0;
-                foreach(char c in txbl_kijelzo.Text)
+                int pos = 0;
+                int prevpos = 0;
+                int osszeg = 0;
+                foreach (char c in txbl_kijelzo.Text)
                 {
-                    if ("*/".Contains(c))
+                    if ("+-".Contains(c) && pos != 0)
                     {
-                        koviOpPosKereses = true;
-                        foreach (char d in felirat)
+                        string subszoveg = txbl_kijelzo.Text.Substring(prevpos, pos - prevpos);
+                        if ("+-*/".Contains(subszoveg.Last()))
                         {
-                            if(koviOpPos > pos && "+-*/".Contains(d))
-                            {
-                                koviOpPosKereses = false;
-                            }
-                            if (koviOpPosKereses)
-                            {
-                            koviOpPos++;
-                            }
-
+                            subszoveg = subszoveg.Remove(subszoveg.Length - 1);
                         }
-
-
-                        elsoFel = txbl_kijelzo.Text.Substring(elozoOpPos, pos + 1);
-                        masodikFel = txbl_kijelzo.Text.Substring(pos + 1,txbl_kijelzo.Text.Length - pos - koviOpPos);
-
-                        Console.WriteLine(elsoFel);
-                        Console.WriteLine(masodikFel);
-
-
-
+                        osszeg += Convert.ToInt32(subszoveg);
+                        prevpos = pos;
                     }
-
-
-
-                    if ("+-*/".Contains(c))
-                    {
-                        elozoOpPos = pos;
-                    }
-
                     pos++;
                 }
+                osszeg += Convert.ToInt32(txbl_kijelzo.Text.Substring(prevpos));
+                txbl_kijelzo.Text = osszeg.ToString();
+
+
             }
             else
             {
