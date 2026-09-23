@@ -106,11 +106,10 @@ namespace Szamologep
                         bool elso = true;
                         char op = '\0';
                         double result = 0;
-                        bool done = false;
+                        bool done;
                         bool secondnumdone = false;
                         while (txbl_kijelzo.Text.Contains('*') || txbl_kijelzo.Text.Contains('/'))
                         {
-                            Trace.WriteLine(txbl_kijelzo.Text);
                             done = false;
                             foreach (char c in txbl_kijelzo.Text)
                             {
@@ -160,11 +159,6 @@ namespace Szamologep
                                                     result = Convert.ToDouble(firstnum) / Convert.ToDouble(secondnum);
                                                     break;
                                             }
-
-                                            Trace.WriteLine(txbl_kijelzo.Text);
-                                            Trace.WriteLine(firstnum);
-                                            Trace.WriteLine(op);
-                                            Trace.WriteLine(secondnum);
                                             txbl_kijelzo.Text = txbl_kijelzo.Text.Replace($"{firstnum}{op}{secondnum}", result.ToString());
                                             firstnum = "";
                                             secondnum = "";
