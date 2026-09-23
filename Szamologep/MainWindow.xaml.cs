@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -87,26 +88,69 @@ namespace Szamologep
             }
             else if (felirat == "=")
             {
+                if ("+-*/".Contains(txbl_kijelzo.Text.Last()))
+                {
+                    
+                }
+                else
+                {
+
+
+                double osszeg = 0;
+                bool tartalmazpm = txbl_kijelzo.Text.Contains('+') || txbl_kijelzo.Text.Contains('-');
+
+                if (txbl_kijelzo.Text.Contains('*') || txbl_kijelzo.Text.Contains('/'))
+                {
+                    string[] darabok = txbl_kijelzo.Text.Split('+', '-');
+                    foreach (string s in darabok)
+                    {
+                        if (s.Contains('*'))
+                        {
+                            if (tartalmazpm && txbl_kijelzo.Text[txbl_kijelzo.Text.IndexOf(s) - 1] == '-')
+                            {
+                                osszeg -= Convert.ToDouble(s.Split('*')[0]) * Convert.ToDouble(s.Split('*')[1]);
+
+                            }
+                            else
+                            {
+                                osszeg += Convert.ToDouble(s.Split('*')[0]) * Convert.ToDouble(s.Split('*')[1]);
+                            }
+                            txbl_kijelzo.Text = txbl_kijelzo.Text.Replace(s, "0");
+                        }
+                        if (s.Contains('/'))
+                        {
+                            if (tartalmazpm && txbl_kijelzo.Text[txbl_kijelzo.Text.IndexOf(s) - 1] == '-')
+                            {
+                                osszeg -= Convert.ToDouble(s.Split('/')[0]) / Convert.ToDouble(s.Split('/')[1]);
+
+                            }
+                            else
+                            {
+                                osszeg += Convert.ToDouble(s.Split('/')[0]) / Convert.ToDouble(s.Split('/')[1]);
+                            }
+                            txbl_kijelzo.Text = txbl_kijelzo.Text.Replace(s, "0");
+                        }
+
+                    }
+                }
+
+
                 int pos = 0;
                 int prevpos = 0;
-                int osszeg = 0;
                 foreach (char c in txbl_kijelzo.Text)
                 {
                     if ("+-".Contains(c) && pos != 0)
                     {
                         string subszoveg = txbl_kijelzo.Text.Substring(prevpos, pos - prevpos);
-                        if ("+-*/".Contains(subszoveg.Last()))
-                        {
-                            subszoveg = subszoveg.Remove(subszoveg.Length - 1);
-                        }
-                        osszeg += Convert.ToInt32(subszoveg);
+                        osszeg += Convert.ToDouble(subszoveg);
                         prevpos = pos;
                     }
                     pos++;
                 }
-                osszeg += Convert.ToInt32(txbl_kijelzo.Text.Substring(prevpos));
-                txbl_kijelzo.Text = osszeg.ToString();
+                osszeg += Convert.ToDouble(txbl_kijelzo.Text.Substring(prevpos));
+                txbl_kijelzo.Text = Math.Round(osszeg,10).ToString();
 
+                }
 
             }
             else
