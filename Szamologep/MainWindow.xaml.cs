@@ -90,65 +90,132 @@ namespace Szamologep
             {
                 if ("+-*/".Contains(txbl_kijelzo.Text.Last()))
                 {
-                    
+
                 }
                 else
                 {
 
 
-                double osszeg = 0;
-                bool tartalmazpm = txbl_kijelzo.Text.Contains('+') || txbl_kijelzo.Text.Contains('-');
+                    double osszeg = 0;
 
-                if (txbl_kijelzo.Text.Contains('*') || txbl_kijelzo.Text.Contains('/'))
-                {
-                    string[] darabok = txbl_kijelzo.Text.Split('+', '-');
-                    foreach (string s in darabok)
+
+                    if (txbl_kijelzo.Text.Contains('*') || txbl_kijelzo.Text.Contains('/'))
                     {
-                        if (s.Contains('*'))
+                        string firstnum = "";
+                        string secondnum = "";
+                        bool elso = true;
+                        char op = '\0';
+                        double result = 0;
+                        bool done = false;
+                        bool secondnumdone = false;
+                        while (txbl_kijelzo.Text.Contains('*') || txbl_kijelzo.Text.Contains('/'))
                         {
-                            if (tartalmazpm && txbl_kijelzo.Text[txbl_kijelzo.Text.IndexOf(s) - 1] == '-')
+                            Trace.WriteLine(txbl_kijelzo.Text);
+                            done = false;
+                            foreach (char c in txbl_kijelzo.Text)
                             {
-                                osszeg -= Convert.ToDouble(s.Split('*')[0]) * Convert.ToDouble(s.Split('*')[1]);
+                                if (!done)
+                                {
 
-                            }
-                            else
-                            {
-                                osszeg += Convert.ToDouble(s.Split('*')[0]) * Convert.ToDouble(s.Split('*')[1]);
-                            }
-                            txbl_kijelzo.Text = txbl_kijelzo.Text.Replace(s, "0");
-                        }
-                        if (s.Contains('/'))
-                        {
-                            if (tartalmazpm && txbl_kijelzo.Text[txbl_kijelzo.Text.IndexOf(s) - 1] == '-')
-                            {
-                                osszeg -= Convert.ToDouble(s.Split('/')[0]) / Convert.ToDouble(s.Split('/')[1]);
+                                    if (char.IsDigit(c) || c == '.')
+                                    {
+                                        if (elso)
+                                        {
+                                            firstnum += c;
+                                        }
+                                        else if (!secondnumdone)
+                                        {
+                                            secondnum += c;
+                                        }
+                                    }
+                                    else if ("+-".Contains(c))
+                                    {
+                                        if (!elso)
+                                        { 
+                                            secondnumdone = true;
+                                        }
+                                        else
+                                        {
+                                            firstnum = "";
+                                        }
+                                        
 
+                                    }
+                                    else if ("*/".Contains(c))
+                                    {
+                                        if (elso)
+                                        {
+                                            op = c;
+                                            elso = false;
+                                        }
+                                        else
+                                        {
+
+                                            switch (op)
+                                            {
+                                                case '*':
+                                                    result = Convert.ToDouble(firstnum) * Convert.ToDouble(secondnum);
+                                                    break;
+                                                case '/':
+                                                    result = Convert.ToDouble(firstnum) / Convert.ToDouble(secondnum);
+                                                    break;
+                                            }
+
+                                            Trace.WriteLine(txbl_kijelzo.Text);
+                                            Trace.WriteLine(firstnum);
+                                            Trace.WriteLine(op);
+                                            Trace.WriteLine(secondnum);
+                                            txbl_kijelzo.Text = txbl_kijelzo.Text.Replace($"{firstnum}{op}{secondnum}", result.ToString());
+                                            firstnum = "";
+                                            secondnum = "";
+                                            secondnumdone = false;
+                                            elso = true;
+                                            done = true;
+                                        }
+                                    }
+                                }
                             }
-                            else
+                    
+
+                            if (!(firstnum == "" || secondnum == ""))
                             {
-                                osszeg += Convert.ToDouble(s.Split('/')[0]) / Convert.ToDouble(s.Split('/')[1]);
+
+                                switch (op)
+                                {
+                                    case '*':
+                                        result = Convert.ToDouble(firstnum) * Convert.ToDouble(secondnum);
+                                        break;
+                                    case '/':
+                                        result = Convert.ToDouble(firstnum) / Convert.ToDouble(secondnum);
+                                        break;
+                                }
+
+                                txbl_kijelzo.Text = txbl_kijelzo.Text.Replace($"{firstnum}{op}{secondnum}", result.ToString());
+                                elso = true;
+                                firstnum = "";
+                                secondnum = "";
                             }
-                            txbl_kijelzo.Text = txbl_kijelzo.Text.Replace(s, "0");
                         }
+
+
 
                     }
-                }
 
 
-                int pos = 0;
-                int prevpos = 0;
-                foreach (char c in txbl_kijelzo.Text)
-                {
-                    if ("+-".Contains(c) && pos != 0)
+                    int pos = 0;
+                    int prevpos = 0;
+                    foreach (char c in txbl_kijelzo.Text)
                     {
-                        string subszoveg = txbl_kijelzo.Text.Substring(prevpos, pos - prevpos);
-                        osszeg += Convert.ToDouble(subszoveg);
-                        prevpos = pos;
+                        if ("+-".Contains(c) && pos != 0)
+                        {
+                            string subszoveg = txbl_kijelzo.Text.Substring(prevpos, pos - prevpos);
+                            osszeg += Convert.ToDouble(subszoveg);
+                            prevpos = pos;
+                        }
+                        pos++;
                     }
-                    pos++;
-                }
-                osszeg += Convert.ToDouble(txbl_kijelzo.Text.Substring(prevpos));
-                txbl_kijelzo.Text = Math.Round(osszeg,10).ToString();
+                    osszeg += Convert.ToDouble(txbl_kijelzo.Text.Substring(prevpos));
+                    txbl_kijelzo.Text = Math.Round(osszeg, 10).ToString();
 
                 }
 
